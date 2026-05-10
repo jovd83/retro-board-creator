@@ -1,0 +1,4 @@
+interface:
+  display_name: "Retro Board Creator"
+  short_description: "Create themed retros and summaries."
+  default_prompt: "Use $retro-board-creator to create a fun retrospective board for my next sprint retro."

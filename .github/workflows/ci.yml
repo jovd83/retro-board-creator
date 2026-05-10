@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate SKILL.md frontmatter
+        run: |
+          python - <<'PY'
+          import re, sys, pathlib
+
+          skill = pathlib.Path("SKILL.md")
+          if not skill.exists():
+              sys.exit("SKILL.md is missing")
+
+          text = skill.read_text(encoding="utf-8")
+          m = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+          if not m:
+              sys.exit("SKILL.md is missing YAML frontmatter delimited by ---")
+
+          fm = m.group(1)
+          for field in ("name:", "description:"):
+              if field not in fm:
+                  sys.exit(f"SKILL.md frontmatter is missing required field: {field}")
+
+          name_line = next(l for l in fm.splitlines() if l.startswith("name:"))
+          if name_line.split(":", 1)[1].strip() != "retro-board-creator":
+              sys.exit("SKILL.md name must be 'retro-board-creator'")
+
+          print("SKILL.md frontmatter OK")
+          PY
+
+      - name: Validate evals JSON
+        run: |
+          python - <<'PY'
+          import json, sys, pathlib
+
+          path = pathlib.Path("evals/evals.json")
+          if not path.exists():
+              sys.exit("evals/evals.json is missing")
+
+          data = json.loads(path.read_text(encoding="utf-8"))
+
+          if data.get("skill_name") != "retro-board-creator":
+              sys.exit("evals.json skill_name must be 'retro-board-creator'")
+
+          evals = data.get("evals")
+          if not isinstance(evals, list) or not evals:
+              sys.exit("evals.json must contain a non-empty 'evals' list")
+
+          required = {"id", "name", "prompt", "expected_output", "assertions"}
+          for i, e in enumerate(evals):
+              missing = required - e.keys()
+              if missing:
+                  sys.exit(f"eval #{i} is missing fields: {sorted(missing)}")
+              if not isinstance(e["assertions"], list) or not e["assertions"]:
+                  sys.exit(f"eval '{e.get('name')}' must have a non-empty assertions list")
+              for a in e["assertions"]:
+                  if "id" not in a or "text" not in a:
+                      sys.exit(f"eval '{e['name']}' has an assertion missing id/text")
+
+          print(f"evals.json OK ({len(evals)} evals)")
+          PY
+
+      - name: Validate Python scripts
+        run: |
+          shopt -s nullglob
+          for f in scripts/*.py; do
+            echo "Compiling $f"
+            python -m py_compile "$f"
+          done
+
+      - name: Check required references and examples
+        run: |
+          python - <<'PY'
+          import sys, pathlib
+
+          required = [
+              "SKILL.md",
+              "README.md",
+              "evals/evals.json",
+              "agents/openai.yaml",
+              "references/board-patterns.md",
+              "references/output-recipes.md",
+              "references/post-retro-summary.md",
+              "scripts/generate_drawio_retro.py",
+              "examples/README.md",
+          ]
+          missing = [p for p in required if not pathlib.Path(p).exists()]
+          if missing:
+              sys.exit("missing required files: " + ", ".join(missing))
+
+          examples = list(pathlib.Path("examples").glob("*.png"))
+          if not examples:
+              sys.exit("examples/ must contain at least one rendered .png example")
+
+          print(f"repo layout OK ({len(examples)} example images)")
+          PY

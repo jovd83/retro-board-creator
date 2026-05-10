@@ -1,0 +1,64 @@
+{
+  "skill_name": "retro-board-creator",
+  "evals": [
+    {
+      "id": 0,
+      "name": "lucky-drawio-creation",
+      "prompt": "Create a fun retro board for our sprint review. I feel lucky. Draw.io please.",
+      "expected_output": "A .drawio file with a themed retro board, autonomous theme/section choices, sticky-note pool, and facilitation widgets",
+      "files": [],
+      "assertions": [
+        {"id": "a1", "text": "A .drawio file is produced at the output path"},
+        {"id": "a2", "text": "The .drawio file is well-formed XML with an mxfile or mxGraphModel root"},
+        {"id": "a3", "text": "The board has a clearly-named title/theme (autonomous theme chosen since user said 'I feel lucky')"},
+        {"id": "a4", "text": "Board contains 3-6 active columns/sections including an Action Items section"},
+        {"id": "a5", "text": "Each active column has visible space for at least 10 sticky notes"},
+        {"id": "a6", "text": "At least one theme-native sentiment or diagnostic widget is present (mood, energy, confidence, etc.)"},
+        {"id": "a7", "text": "A copy/paste pool of blank sticky notes in multiple colors is included"},
+        {"id": "a8", "text": "Dot-voting tokens or markers are included"},
+        {"id": "a9", "text": "Sticky notes are editable Draw.io cell objects (not baked into a background image)"},
+        {"id": "a10", "text": "Wording is blame-free and process-focused"}
+      ]
+    },
+    {
+      "id": 1,
+      "name": "serious-mermaid-incident",
+      "prompt": "Make a Mermaid retrospective board for a production outage post-mortem we're running tomorrow with 8 engineers. Keep it serious and blame-free, focus on timeline + prevention experiments.",
+      "expected_output": "A Mermaid diagram suitable for incident retro: timeline, what helped, what hurt, prevention, action items; serious tone; no theming clutter",
+      "files": [],
+      "assertions": [
+        {"id": "a1", "text": "Output contains a Mermaid diagram (in a ```mermaid block or a .mmd/.md file)"},
+        {"id": "a2", "text": "Mermaid syntax is valid and parses without errors"},
+        {"id": "a3", "text": "Diagram includes a timeline / facts node or section"},
+        {"id": "a4", "text": "Diagram includes a 'what helped' or 'what worked' section"},
+        {"id": "a5", "text": "Diagram includes a 'what hurt recovery' or 'pain' section"},
+        {"id": "a6", "text": "Diagram includes a prevention experiments section"},
+        {"id": "a7", "text": "Diagram includes an action items section referencing owner and due date"},
+        {"id": "a8", "text": "Tone is serious and blame-free — no words like 'fault', 'blame', 'who caused'"},
+        {"id": "a9", "text": "Dense board is split into overview + action-item table when needed, OR stays compact and readable"},
+        {"id": "a10", "text": "Includes facilitation guidance (timeboxes, session goal, or owner/due-date prompts) in notes"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "post-retro-confluence-jira",
+      "prompt": "Here are sticky notes from yesterday's retro (text-only, dot votes in parens):\nWent well: 'Pairing on auth refactor' (5), 'Faster CI after caching' (3), 'Demo to stakeholders nailed it' (2)\nDid not go well: 'Standups running 25+ min' (6), 'Flaky e2e tests on main' (4), 'PR reviews stalled 2+ days' (4)\nIdeas: 'Round-robin standup facilitator' (3), 'Quarantine flaky test suite' (5)\nPlease summarize into Confluence notes and Jira action drafts.",
+      "expected_output": "Confluence-ready summary with themes/decisions; Jira action drafts with title, description, owner placeholder, due date, acceptance criteria",
+      "files": [],
+      "assertions": [
+        {"id": "a1", "text": "A confluence.md (or equivalent) file is produced"},
+        {"id": "a2", "text": "A jira.md (or equivalent) file is produced"},
+        {"id": "a3", "text": "Confluence notes contain Summary, Themes, Decisions, and Action items sections"},
+        {"id": "a4", "text": "Top-voted pain point ('Standups running 25+ min', 6 votes) is reflected as a top theme or action"},
+        {"id": "a5", "text": "Top-voted idea ('Quarantine flaky test suite', 5 votes) is reflected as an action or experiment"},
+        {"id": "a6", "text": "Each Jira draft includes a Title field"},
+        {"id": "a7", "text": "Each Jira draft includes a Description field"},
+        {"id": "a8", "text": "Each Jira draft includes an Owner (or Owner placeholder) field"},
+        {"id": "a9", "text": "Each Jira draft includes a Due date (or Due date placeholder) field"},
+        {"id": "a10", "text": "Each Jira draft includes Acceptance criteria"},
+        {"id": "a11", "text": "Action items are written in experiment format or are specific, owned, and measurable"},
+        {"id": "a12", "text": "Wording is blame-free and process-focused"}
+      ]
+    }
+  ]
+}
